@@ -13,6 +13,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -47,9 +49,11 @@ public class CharacterViewController implements Initializable {
     @FXML
     private StackPane nameBox;
     @FXML
-    private Button statsButton;
+    private TabPane tabPane;
     @FXML
-    private Button transformationsButton;
+    private Tab statsTab;
+    @FXML
+    private Tab transformationsTab;
     @FXML
     private Button newCharacterButton;
     @FXML
@@ -59,7 +63,9 @@ public class CharacterViewController implements Initializable {
     @FXML
     private Button importCharacterSpritesButton;
     @FXML
-    private AnchorPane subView;
+    private AnchorPane statsSubViewPane;
+    @FXML
+    private AnchorPane transformationsSubViewPane;
 
     private enum SubViewSelection {
         STATS,
@@ -73,6 +79,19 @@ public class CharacterViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeCharacterButtons();
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (newValue == statsTab) {
+                    subViewSelection = SubViewSelection.STATS;
+                } else if (newValue == transformationsTab) {
+                    subViewSelection = SubViewSelection.TRANSFORMATIONS;
+                }
+                updateSubViews();
+                log.debug("Tab changed to: {}", subViewSelection);
+            } catch (Exception e) {
+                log.error("Error changing character tab: {}", e.getMessage(), e);
+            }
+        });
         statsViewController.setRefreshIdleSprite(this::initializeCharacterSelectionListView);
         statsViewController.setRefreshAll(this::refreshAll);
         statsViewController.initialize(location, resources);
@@ -84,10 +103,27 @@ public class CharacterViewController implements Initializable {
     }
 
     public void refreshAll() {
-        initializeCharacterSelectionListView();
-        initializeNameBox();
-        refreshButtons();
-        initializeSubView();
+        try {
+            initializeCharacterSelectionListView();
+            try {
+                initializeNameBox();
+            } catch (Exception e) {
+                log.error("Error initializing name box: {}", e.getMessage(), e);
+            }
+            try {
+                updateNewDeleteButtons();
+            } catch (Exception e) {
+                log.error("Error updating buttons: {}", e.getMessage(), e);
+            }
+            try {
+                updateSubViews();
+            } catch (Exception e) {
+                log.error("Error updating subviews: {}", e.getMessage(), e);
+            }
+            log.debug("Complete refresh completed successfully");
+        } catch (Exception e) {
+            log.error("Critical error during refreshAll(): {}", e.getMessage(), e);
+        }
     }
 
     private void initializeCharacterButtons() {
@@ -114,17 +150,26 @@ public class CharacterViewController implements Initializable {
     }
 
     private void initializeCharacterSelectionListView() {
-        characterSelectionListView.initialize(spriteImageTranslator.createImageValuePairs(appState.getIdleForCharacters()), 1.0, null, null);
-        characterSelectionListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                characterSelection = newValue.getValue();
-                if(nameUpdater != null) {
-                    nameUpdater.cancel();
+        try {
+            characterSelectionListView.initialize(spriteImageTranslator.createImageValuePairs(appState.getIdleForCharacters()), 1.0, null, null);
+            characterSelectionListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    try {
+                        characterSelection = newValue.getValue();
+                        if(nameUpdater != null) {
+                            nameUpdater.cancel();
+                        }
+                        initializeNameBox();
+                        updateSubViews();
+                        log.debug("Character selection completed for character: {}", characterSelection);
+                    } catch (Exception e) {
+                        log.error("Error processing character selection: {}", e.getMessage(), e);
+                    }
                 }
-                initializeNameBox();
-                initializeSubView();
-            }
-        });
+            });
+        } catch (Exception e) {
+            log.error("Error initializing character selection list view: {}", e.getMessage(), e);
+        }
     }
 
     private static final String NAME_TEXT_ERROR = "Name sprites must be a multiple of 80 pixels in width and 15 pixels in height. Examples: 80x15, 160x15, 240x15, etc.";
@@ -183,41 +228,37 @@ public class CharacterViewController implements Initializable {
         }
     }
 
-    private void refreshButtons() {
-        if(subViewSelection == SubViewSelection.STATS) {
-            statsButton.setDisable(true);
-            transformationsButton.setDisable(false);
-        } else {
-            statsButton.setDisable(false);
-            transformationsButton.setDisable(true);
-        }
-        statsButton.setOnAction(e -> {
-            subViewSelection = SubViewSelection.STATS;
-            initializeSubView();
-            refreshButtons();
-        });
-        transformationsButton.setOnAction(e -> {
-            subViewSelection = SubViewSelection.TRANSFORMATIONS;
-            initializeSubView();
-            refreshButtons();
-        });
+    private void updateNewDeleteButtons() {
         newCharacterButton.setDisable(appState.getCardData().getCharacters().size() >= appState.getCardData().getNumberOfAvailableCharacterSlots());
         deleteCharacterButton.setDisable(appState.getCardData().getCharacters().size() == 1);
     }
 
-    private void initializeSubView() {
-        subView.getChildren().clear();
-        switch(subViewSelection) {
-            case STATS -> {
-                statsViewController.setCharacter(appState.getCharacter(characterSelection));
-                statsViewController.refreshAll();
-                subView.getChildren().add(statsSubView);
+    private void updateSubViews() {
+        try {
+            switch (subViewSelection) {
+                case STATS -> tabPane.getSelectionModel().select(statsTab);
+                case TRANSFORMATIONS -> tabPane.getSelectionModel().select(transformationsTab);
             }
-            case TRANSFORMATIONS -> {
-                transformationViewController.setCharacter(appState.getCharacter(characterSelection));
-                transformationViewController.refreshAll();
-                subView.getChildren().add(transformationsSubView);
+            
+            statsSubViewPane.getChildren().clear();
+            transformationsSubViewPane.getChildren().clear();
+            
+            statsSubViewPane.getChildren().add(statsSubView);
+            transformationsSubViewPane.getChildren().add(transformationsSubView);
+            
+            switch (subViewSelection) {
+                case STATS -> {
+                    statsViewController.setCharacter(appState.getCharacter(characterSelection));
+                    statsViewController.refreshAll();
+                }
+                case TRANSFORMATIONS -> {
+                    transformationViewController.setCharacter(appState.getCharacter(characterSelection));
+                    transformationViewController.refreshAll();
+                }
             }
+            log.debug("SubViews updated successfully for character {}", characterSelection);
+        } catch (Exception e) {
+            log.error("Error during subview update for character {}: {}", characterSelection, e.getMessage(), e);
         }
     }
 

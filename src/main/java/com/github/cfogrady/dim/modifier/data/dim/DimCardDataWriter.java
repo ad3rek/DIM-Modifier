@@ -105,8 +105,9 @@ public class DimCardDataWriter extends CardDataWriter<
 
     @Override
     protected TransformationRequirements.TransformationRequirementsEntry.TransformationRequirementsEntryBuilder<? extends DimEvolutionRequirements.DimEvolutionRequirementBlock, ?> getTransformationEntryFromFusionBuilder(DimCharacter character) {
+        int hoursValue = (character.getHoursUntilFusionCheck() == null) ? NONE_VALUE : character.getHoursUntilFusionCheck();
         return DimEvolutionRequirements.DimEvolutionRequirementBlock.builder()
-                .hoursUntilEvolution(NoneUtils.noneIfNull(character.getHoursUntilFusionCheck()));
+                .hoursUntilEvolution(hoursValue);
     }
 
     @Override

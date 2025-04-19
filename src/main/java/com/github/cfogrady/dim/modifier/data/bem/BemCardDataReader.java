@@ -36,7 +36,8 @@ public class BemCardDataReader extends CardDataRreader<
                 if(minutes != null) {
                     log.error("BEM encountered with different fusion evolution timers from a single digimon. Please log an issue with the BEM on https://github.com/cfogrady/DIM-Modifier/issues");
                 }
-                minutes = entry.getMinutesUntilTransformation();
+                int rawMinutes = entry.getMinutesUntilTransformation();
+                minutes = (rawMinutes == NONE_VALUE) ? null : rawMinutes;
             }
         }
         return minutes;

@@ -14,9 +14,9 @@
    <children>
       <VBox spacing="10.0">
          <children>
-            <StackPane fx:id="backgroundStackPane" alignment="BOTTOM_CENTER" maxHeight="320.0" maxWidth="160.0" minWidth="160" minHeight="320">
+            <StackPane fx:id="backgroundStackPane" alignment="BOTTOM_CENTER"  minWidth="160" minHeight="320">
                <children>
-                  <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" smooth="false" />
                </children>
             </StackPane>
             <HBox alignment="TOP_CENTER" spacing="10.0">

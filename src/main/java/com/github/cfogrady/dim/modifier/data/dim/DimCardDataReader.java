@@ -46,10 +46,11 @@ public class DimCardDataReader extends CardDataRreader<
                 if(hours != null) {
                     log.error("DIM encountered with different fusion evolution timers from a single digimon. Please log an issue with the BEM on https://github.com/cfogrady/DIM-Modifier/issues");
                 }
-                hours = entry.getHoursUntilEvolution();
+                int rawHours = entry.getHoursUntilEvolution();
+                hours = (rawHours == NONE_VALUE) ? null : rawHours;
             }
         }
-        return hours == null ? hours : NoneUtils.nullIfNone(hours);
+        return hours;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.github.cfogrady.dim.modifier.data.dim.DimCardDataWriter;
 import com.github.cfogrady.dim.modifier.data.firmware.FirmwareData10bBuilder;
 import com.github.cfogrady.dim.modifier.data.firmware.FirmwareData20bBuilder;
 import com.github.cfogrady.dim.modifier.data.firmware.FirmwareManager;
+import com.github.cfogrady.vb.dim.card.Card;
 import com.github.cfogrady.vb.dim.card.DimReader;
 import com.github.cfogrady.vb.dim.card.DimWriter;
 import com.github.cfogrady.vb.dim.sprite.BemSpriteReader;
@@ -84,7 +85,7 @@ public class ApplicationOrchestrator {
         loader = new FXMLLoader(ApplicationOrchestrator.class.getResource("/DimSystemView.fxml"));
         loader.setControllerFactory(p -> dimSystemViewController);
         Node dimSystemView = loader.load();
-        LoadedViewController loadedViewController = new LoadedViewController(appState, charactersView, characterViewController, battlesViewController, battlesView, bemSystemViewController, bemSystemView, dimSystemViewController, dimSystemView, dimReaderController);
+        LoadedViewController loadedViewController = new LoadedViewController(appState, charactersView, characterViewController, battlesViewController, battlesView, bemSystemViewController, bemSystemView, dimSystemViewController, dimSystemView, dimReaderController, spriteImageTranslator, stage);
         FirstLoadScene firstLoadScene = new FirstLoadScene(appState, stage, cardDataIO, loadedViewController);
         FirmwareLoadScene firmwareLoadScene = new FirmwareLoadScene(stage, firmwareManager, firstLoadScene, appState);
         return ApplicationOrchestrator.builder()

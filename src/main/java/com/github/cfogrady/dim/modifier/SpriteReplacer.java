@@ -42,11 +42,23 @@ public class SpriteReplacer {
         fileChooser.setTitle("Select sprite replacement.");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image format", "*.png", "*.bmp"));
         if(appState.getLastOpenedFilePath() != null) {
-            fileChooser.setInitialDirectory(appState.getLastOpenedFilePath());
+            File parentDir = appState.getLastOpenedFilePath().getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                try {
+                    fileChooser.setInitialDirectory(parentDir);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Could not set initial directory: {}", parentDir.getAbsolutePath(), e);
+                    // Use home directory as fallback
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                }
+            }
         }
         File file = fileChooser.showOpenDialog(stage);
         if(file != null) {
-            appState.setLastOpenedFilePath(file.getParentFile());
+            File parentDir = file.getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                appState.setLastOpenedFilePath(parentDir);
+            }
             return loadSpriteFromFile(file);
         }
         return null;
@@ -57,11 +69,23 @@ public class SpriteReplacer {
         fileChooser.setTitle("Select sprite replacement. Should be " + sprite.getWidth() + " x " + sprite.getHeight());
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image format", "*.png", "*.bmp"));
         if(appState.getLastOpenedFilePath() != null) {
-            fileChooser.setInitialDirectory(appState.getLastOpenedFilePath());
+            File parentDir = appState.getLastOpenedFilePath().getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                try {
+                    fileChooser.setInitialDirectory(parentDir);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Could not set initial directory: {}", parentDir.getAbsolutePath(), e);
+                    // Use home directory as fallback
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                }
+            }
         }
         File file = fileChooser.showOpenDialog(stage);
         if(file != null) {
-            appState.setLastOpenedFilePath(file.getParentFile());
+            File parentDir = file.getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                appState.setLastOpenedFilePath(parentDir);
+            }
         }
         return replaceSprite(sameWidth ? sprite.getWidth() : null, sameHeight ? sprite.getHeight() : null, file);
     }

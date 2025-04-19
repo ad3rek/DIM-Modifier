@@ -13,6 +13,7 @@ import com.github.cfogrady.vb.dim.card.DimReader;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -45,6 +46,18 @@ public class CardDataIO {
             dimCardDataWriter.write(file, dimCardData);
         } else {
             throw new IllegalArgumentException("Unknown CardData type: " + cardData.getClass().getName());
+        }
+    }
+    
+    /**
+     * Lê um arquivo .bin e retorna o CardData correspondente
+     * @param file Arquivo .bin para ler
+     * @return CardData lido do arquivo
+     * @throws IOException Em caso de erro na leitura do arquivo
+     */
+    public CardData<?, ?, ?> readFromFile(File file) throws IOException {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            return readFromStream(inputStream);
         }
     }
 }

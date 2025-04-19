@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.net.URL;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,6 +22,7 @@ public class FirmwareLoadScene {
     private final FirmwareManager firmwareManager;
     private final FirstLoadScene firstLoadScene;
     private final AppState appState;
+    private static final String DARK_THEME_CSS = "/dark-theme.css";
 
     public void setupScene() {
         Button button = new Button();
@@ -44,9 +46,30 @@ public class FirmwareLoadScene {
                 }
             }
         });
-        Scene scene = new Scene(new StackPane(button), 640, 480);
+        
+        StackPane root = new StackPane(button);
+        root.getStyleClass().add("root");
+        
+        Scene scene = new Scene(root, 640, 480);
+        applyStylesheet(scene);
 
         stage.setScene(scene);
         stage.show();
+    }
+    
+    /**
+     * Aplica o CSS à cena
+     */
+    private void applyStylesheet(Scene scene) {
+        try {
+            URL cssResource = getClass().getResource(DARK_THEME_CSS);
+            if (cssResource != null) {
+                scene.getStylesheets().add(cssResource.toExternalForm());
+            } else {
+                log.error("CSS stylesheet not found: {}", DARK_THEME_CSS);
+            }
+        } catch (Exception e) {
+            log.error("Error applying stylesheet", e);
+        }
     }
 }

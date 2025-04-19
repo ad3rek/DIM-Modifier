@@ -97,15 +97,13 @@ public class BemCardDataWriter extends CardDataWriter<
 
     @Override
     protected BemTransformationRequirements.BemTransformationRequirementEntry.BemTransformationRequirementEntryBuilder<?, ?> getTransformationEntryFromFusionBuilder(BemCharacter character) {
-        if(character.getMinutesUntilFusionCheck() == null) {
-            throw new IllegalStateException("Somehow have no minutes until fusion check even though we have fusions!");
-        }
+        int minutesValue = (character.getMinutesUntilFusionCheck() == null) ? NONE_VALUE : character.getMinutesUntilFusionCheck();
         return BemTransformationRequirements.BemTransformationRequirementEntry.builder()
-                .minutesUntilTransformation(character.getMinutesUntilFusionCheck())
-                .minimumMinuteOfHour(0)
+                .minutesUntilTransformation(minutesValue)
+                .isNotSecret(1)
                 .maximumMinuteOfHour(NONE_VALUE)
-                .requiredCompletedAdventureLevel(NONE_VALUE)
-                .isNotSecret(NONE_VALUE);
+                .minimumMinuteOfHour(0)
+                .requiredCompletedAdventureLevel(NONE_VALUE);
     }
 
     @Override

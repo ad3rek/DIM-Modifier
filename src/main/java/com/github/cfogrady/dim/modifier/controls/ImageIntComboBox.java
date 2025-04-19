@@ -2,6 +2,7 @@ package com.github.cfogrady.dim.modifier.controls;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
@@ -72,28 +73,30 @@ public class ImageIntComboBox extends ComboBox<ImageIntPair> {
 
         @Override
         protected void updateItem(ImageIntPair option, boolean empty) {
-            super.updateItem(option, empty) ;
+            super.updateItem(option, empty);
             setText(null);
             setGraphic(null);
             if(empty || option.getValue() == null) {
                 StackPane stackPane = new StackPane(new Text(noneText == null ? "NONE" : noneText));
+                stackPane.setAlignment(Pos.CENTER);
                 VBox.setMargin(stackPane, new Insets(10));
                 setGraphic(stackPane);
             } else if (!empty) {
                 ImageView imageView = new ImageView(option.getLabel());
                 imageView.setFitWidth(option.getLabel().getWidth() * scaler);
                 imageView.setFitHeight(option.getLabel().getHeight() * scaler);
+                
+                StackPane stackPane = new StackPane(imageView);
+                stackPane.setAlignment(Pos.CENTER);
+                stackPane.setMaxHeight(option.getLabel().getHeight() * scaler);
+                stackPane.setPrefWidth(USE_COMPUTED_SIZE);
+                
                 if(background != null) {
-                    StackPane stackPane = new StackPane(imageView);
-                    stackPane.setMaxHeight(option.getLabel().getHeight() * scaler);
-                    stackPane.setMaxWidth(option.getLabel().getWidth() * scaler);
                     stackPane.setBackground(background);
-                    VBox.setMargin(stackPane, new Insets(10));
-                    setGraphic(stackPane);
-                } else {
-                    VBox.setMargin(imageView, new Insets(10));
-                    setGraphic(imageView);
                 }
+                
+                VBox.setMargin(stackPane, new Insets(10));
+                setGraphic(stackPane);
             }
         }
     }

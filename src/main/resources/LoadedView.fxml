@@ -6,34 +6,78 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-
-
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
-<VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.cfogrady.dim.modifier.controllers.LoadedViewController">
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.Priority?>
+
+<VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.github.cfogrady.dim.modifier.controllers.LoadedViewController" 
+      styleClass="root" spacing="0" VBox.vgrow="ALWAYS">
    <children>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
+      <MenuBar VBox.vgrow="NEVER">
+         <menus>
+            <Menu text="File">
+               <items>
+                  <MenuItem fx:id="openMenuItem" text="Open"/>
+                  <MenuItem fx:id="saveMenuItem" text="Save"/>
+                  <MenuItem fx:id="saveAsMenuItem" text="Save As"/>
+                  <Menu text="Export">
+                     <items>
+                        <MenuItem fx:id="exportAllMenuItem" text="Export All"/>
+                        <MenuItem fx:id="exportSpritesMenuItem" text="Export Sprites"/>
+                        <MenuItem fx:id="exportDataMenuItem" text="Export Data"/>
+                     </items>
+                  </Menu>
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      
+      <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="info-header" VBox.vgrow="NEVER">
          <children>
-            <Button fx:id="openButton" mnemonicParsing="false" text="Open" />
-            <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
-            <Text fx:id="dimIdText" strokeType="OUTSIDE" strokeWidth="0.0" text="DIM ID: 0" />
+            <Text fx:id="dimIdText" styleClass="title" strokeType="OUTSIDE" strokeWidth="0.0" text="DIM ID: 0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Region styleClass="spacer-horizontal" HBox.hgrow="ALWAYS" />
             <Text fx:id="revisionIdText" strokeType="OUTSIDE" strokeWidth="0.0" text="Revision: 0" />
+            <Region styleClass="spacer-horizontal" minWidth="10" />
             <Text fx:id="factoryDateText" strokeType="OUTSIDE" strokeWidth="0.0" text="Factory Date" />
+            <Region styleClass="spacer-horizontal" minWidth="10" />
             <Text fx:id="checksumText" strokeType="OUTSIDE" strokeWidth="0.0" text="Checksum" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Button fx:id="charactersButton" mnemonicParsing="false" text="Characters" />
-            <Button fx:id="battlesButton" mnemonicParsing="false" text="Battles" />
-            <Button fx:id="systemButton" mnemonicParsing="false" text="System" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <AnchorPane fx:id="subView" VBox.vgrow="ALWAYS"/>
+      
+      <VBox VBox.vgrow="ALWAYS" styleClass="content-container">
+         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+               <Tab fx:id="charactersTab" text="Characters">
+                  <content>
+                     <AnchorPane fx:id="charactersSubViewPane" styleClass="tab-content" VBox.vgrow="ALWAYS"/>
+                  </content>
+               </Tab>
+               <Tab fx:id="battlesTab" text="Battles">
+                  <content>
+                     <AnchorPane fx:id="battlesSubViewPane" styleClass="tab-content" VBox.vgrow="ALWAYS"/>
+                  </content>
+               </Tab>
+               <Tab fx:id="systemTab" text="System">
+                  <content>
+                     <AnchorPane fx:id="systemSubViewPane" styleClass="tab-content" VBox.vgrow="ALWAYS"/>
+                  </content>
+               </Tab>
+            </tabs>
+         </TabPane>
+      </VBox>
    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
+   </padding>
 </VBox>

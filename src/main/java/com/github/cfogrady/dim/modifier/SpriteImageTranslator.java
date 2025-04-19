@@ -99,11 +99,23 @@ public class SpriteImageTranslator {
         fileChooser.setTitle("Import Sprite Sheet:");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image format", "*.png", "*.bmp"));
         if(appState.getLastOpenedFilePath() != null) {
-            fileChooser.setInitialDirectory(appState.getLastOpenedFilePath());
+            File parentDir = appState.getLastOpenedFilePath().getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                try {
+                    fileChooser.setInitialDirectory(parentDir);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Could not set initial directory: {}", parentDir.getAbsolutePath(), e);
+                    // Use home directory as fallback
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                }
+            }
         }
         File file = fileChooser.showOpenDialog(stage);
         if(file != null) {
-            appState.setLastOpenedFilePath(file.getParentFile());
+            File parentDir = file.getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                appState.setLastOpenedFilePath(parentDir);
+            }
             loadSpriteSheet(character, file);
         }
     }
@@ -173,11 +185,23 @@ public class SpriteImageTranslator {
         fileChooser.setTitle("Save Sprite Sheet As:");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image format", "*.png"));
         if(appState.getLastOpenedFilePath() != null) {
-            fileChooser.setInitialDirectory(appState.getLastOpenedFilePath());
+            File parentDir = appState.getLastOpenedFilePath().getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                try {
+                    fileChooser.setInitialDirectory(parentDir);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Could not set initial directory: {}", parentDir.getAbsolutePath(), e);
+                    // Use home directory as fallback
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                }
+            }
         }
         File file = fileChooser.showSaveDialog(stage);
         if(file != null) {
-            appState.setLastOpenedFilePath(file.getParentFile());
+            File parentDir = file.getParentFile();
+            if(parentDir != null && parentDir.exists() && parentDir.isDirectory()) {
+                appState.setLastOpenedFilePath(parentDir);
+            }
             List<SpriteData.Sprite> sprites = character.getSprites();
             if(sprites.size() == 14) {
                 exportCharacterSpriteSheet(file, sprites.subList(1, sprites.size()));

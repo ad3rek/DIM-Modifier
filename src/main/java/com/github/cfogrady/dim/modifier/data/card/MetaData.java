@@ -6,10 +6,10 @@ import lombok.Data;
 @Builder
 @Data
 public class MetaData {
-    private final int id;
-    private final int revision;
-    private final int year;
-    private final int month;
-    private final int day;
-    private final int originalChecksum;
+    private int id;
+    private int revision;
+    private int year;
+    private int month;
+    private int day;
+    private int originalChecksum;
 }
