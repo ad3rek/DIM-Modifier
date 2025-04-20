@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
@@ -26,6 +27,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Create common firmware directory if it doesn't exist
+            String commonFirmwareDir = System.getProperty("user.dir") + "/common_firmware";
+            new File(commonFirmwareDir).mkdirs();
+            System.setProperty("firmware.dir", commonFirmwareDir);
+            
             applicationOrchestrator = ApplicationOrchestrator.buildOrchestration(primaryStage);
             
             // Aplicar o tema escuro à aplicação

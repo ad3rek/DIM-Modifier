@@ -38,7 +38,7 @@ public class ApplicationOrchestrator {
     public static ApplicationOrchestrator buildOrchestration(Stage stage) throws IOException {
         DimReader dimReader = new DimReader();
         DimWriter dimWriter = new DimWriter();
-        Preferences preferences = Preferences.userNodeForPackage(Main.class);
+        Preferences preferences = Preferences.userNodeForPackage(Main.class).node("firmware");
         BemSpriteReader bemSpriteReader = new BemSpriteReader();
         FirmwareData10bBuilder firmwareData10bBuilder = new FirmwareData10bBuilder(bemSpriteReader);
         FirmwareData20bBuilder firmwareData20bBuilder = new FirmwareData20bBuilder(bemSpriteReader);

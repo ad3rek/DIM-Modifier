@@ -22,7 +22,16 @@ public class FirmwareManager {
     private final Preferences preferences;
 
     public void setFirmwareLocation(File file) {
-        preferences.put(FIRMWARE_LOCATION, file.getAbsolutePath());
+        // Copy firmware to common directory
+        String commonFirmwareDir = System.getProperty("firmware.dir");
+        File commonFile = new File(commonFirmwareDir, file.getName());
+        try {
+            java.nio.file.Files.copy(file.toPath(), commonFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            preferences.put(FIRMWARE_LOCATION, commonFile.getAbsolutePath());
+        } catch (IOException e) {
+            log.error("Failed to copy firmware file to common directory", e);
+            preferences.put(FIRMWARE_LOCATION, file.getAbsolutePath());
+        }
     }
 
     public void clearFirmwareLocation() {
@@ -32,6 +41,18 @@ public class FirmwareManager {
     public boolean isValidFirmwareLocationSet() {
         String firmwareFile = preferences.get(FIRMWARE_LOCATION, null);
         if(firmwareFile == null) {
+            // Check if firmware exists in common directory
+            String commonFirmwareDir = System.getProperty("firmware.dir");
+            File commonDir = new File(commonFirmwareDir);
+            if(commonDir.exists() && commonDir.isDirectory()) {
+                File[] firmwareFiles = commonDir.listFiles((dir, name) -> 
+                    name.endsWith("VBBE_20A.vb2") || name.endsWith("VBBE_10B.vb2"));
+                if(firmwareFiles != null && firmwareFiles.length > 0) {
+                    // Found firmware in common directory, update preferences
+                    preferences.put(FIRMWARE_LOCATION, firmwareFiles[0].getAbsolutePath());
+                    return true;
+                }
+            }
             return false;
         }
         File file = new File(firmwareFile);
